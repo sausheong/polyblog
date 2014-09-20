@@ -1,0 +1,15 @@
+.content
+  .row
+    %h2.text-info Write a post
+  .row
+    %form{method: :post, action: "/_/post"}
+      .form-group
+        %input.form-control{name: "title", placeholder: "Write your title here"}
+      .form-group  
+        %textarea.form-control{rows: 10, name: "content", placeholder: "Write your post here"}
+  
+      %hr
+      %button.btn.btn-primary{type: :submit} 
+        %i.fa.fa-save
+        Save
+      %a.btn.btn-default{href: "/"} Cancel

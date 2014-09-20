@@ -1,0 +1,1 @@
+sequel -m migrations postgres://polyblog:polyblog@localhost:5432/polyblog

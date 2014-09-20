@@ -1,0 +1,1 @@
+javac -cp  zmq.jar:json-simple-1.1.1.jar AddPost.java

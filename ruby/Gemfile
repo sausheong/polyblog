@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+gem 'haml', '~>4.0.5'
+gem 'json', '~>1.8.1'
+gem 'sequel', '~> 4.8.0'
+gem 'pg', '~> 0.17.1'
+gem 'ffi-rzmq', '~>2.0.1'

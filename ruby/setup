@@ -1,0 +1,6 @@
+psql -h localhost -c "create user polyblog with password 'polyblog'"
+psql -h localhost -c "drop database if exists polyblog"
+psql -h localhost -c "create database polyblog"
+psql -h localhost -c "grant all privileges on database polyblog to polyblog"
+
+sequel -m ruby/migrations postgres://polyblog:polyblog@localhost:5432/polyblog
