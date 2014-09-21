@@ -1,0 +1,1 @@
+java -cp postgresql-9.3-1102.jdbc41.jar:json-simple-1.1.1.jar:zmq.jar:. -Djava.library.path=/usr/local/lib AddPost
