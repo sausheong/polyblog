@@ -1,33 +1,41 @@
 # PolyBlog
-### Or How to Create A Web Application with 3 Different Programming Languages
+### Or How to Create A Web App with 3 Different Programming Languages
 
-This is the story of how you can create a web application in 3 different programming languages. As you might notice as you read further, the example I show here is contrived, unlikely and overly complicated. You would probably never write a simple blog application with 3 different programming languages, and really, you shouldn't. However you'd likely want to write web applications that can scale whenever you want it to, and also evolve the application without even taking it down. This is one way of doing it.
+This is the story of how you can create a web web app in 3 different programming languages. As you might notice as you read further, the web app created here is contrived, unlikely and overly complicated. You would probably never write a simple blog app with 3 different programming languages, and really, you shouldn't. 
 
-This web application uses [Polyglot](https://github.com/sausheong/polyglot), a framework for writing web applications with multiple programming languages. Naturally, the first thing you'd need to do is to install it.
+However you'd likely want to write web apps that can scale whenever you want it to, and also evolve alongside with you and your team (assuming, of course, that you have a team). 
+
+The web app I will show you uses [Polyglot](https://github.com/sausheong/polyglot), a framework for writing web web apps with multiple programming languages. Naturally, the first thing you'd need to do is to install it.
 
 ## Install Polyglot
 
-First, clone the [Polyglot](https://github.com/sausheong/polyglot) repository, and follow the instructions to install it. Mostly this involves compiling Polyglot for your platform (it's developed in Go). Once you have done that, copy out the `polyglot`, `broker` and `config.json` files into your application directory.
+First, clone the [Polyglot](https://github.com/sausheong/polyglot) repository, and follow the instructions to install it. Mostly this involves compiling Polyglot for your platform (it's developed in Go). Once you have done that, copy out the `polyglot`, `broker` and `config.json` files into your web app directory.
 
-A Polyglot application is broken down into 3 different components (no, they are not model, view and controller):
+A Polyglot web app is broken down into 3 different components (no, they are not model, view and controller):
 
 1. Acceptor
 2. Broker
 3. Responder
 
-The architecture is simple -- the acceptor accepts requests (usually from the browser), which passes it to the broker. The broker determines which responder it should send the request to from the route, and sends the request to an appropriate responder. There are usually more than 1 responder for a single route. The responder then processes the request and returns a response to the broker, which then sends it to the calling acceptor.
+The Polyglot architecture is simple -- the acceptor accepts requests (usually from the browser), which passes it to the broker. The broker determines which responder it should send the request to from the route, and sends the request to an appropriate responder. There are usually more than 1 responder for a single route. The responder then processes the request and returns a response to the broker, which then sends it to the calling acceptor.
 
-The `polyglot` file you have copied out to your application directory is the acceptor, which accepts requests from your browser. You can configure it using the `config.json` file. The `broker` file is the broker, which determines which responder the request to go to, depending on the route the browser requested. As you can see, both the acceptor and broker are already provided by Polyglot. What we need to do are just the responders. Simple, right?
+The `polyglot` file you have copied out to your web app directory is the acceptor, which accepts requests from your browser. You can configure it using the `config.json` file. The `broker` file is the broker, which determines which responder the request should be sent to. As you can see, both the acceptor and broker are already provided by Polyglot. What we need to do are just the responders. 
 
-## So what does this application do anyway?
+Simple, right?
 
-Now you have 2/3 of your web application done, you can start thinking what you actually want it to do. In this example, we're going to run through creating a simple blog application. What it does is to allow someone to create a blog post (consisting of a title and the content of the post), and also to show all previously created blog posts in a list.
+## So what does this web app do anyway?
 
-Now you would probably say at this point in time that this is not really usable as a blog application and you would be right. However, many applications are created the same way -- create a minimal viable product (MVP) first, then evolve it to what you eventually want. This is what we'll do here.
+Now we have 2/3 of our web web app done (just kidding!), we can start thinking what we actually want it to do. What our app should do is to allow someone to create a blog post (consisting of a title and the content of the post), and also to show all previously created blog posts in a list. Easy enough, and if you've done any sort of web app development before you'll likely come to the same idea that we will need 3 routes:
+
+1. Show the add post form (GET)
+2. Create the post from the form data (POST)
+3. Show all posts (GET)
+
+Now you would probably say at this point in time that this is not really usable as a blog app and you would be right. However, many web apps are created the same way -- create a minimal viable product (MVP) first, then evolve it to what you eventually want. 
 
 ## Create the database tables
 
-Before we jump into writing the responders, let's talk about the database tables. For this application, the database table we'll need is pretty simple -- we just need a table to store all the posts that are being created. We'll be using Postgres for that.
+Before we jump into writing the responders, let's talk about the database tables. For this web app, the database table we'll need is pretty simple -- we just need a table to store all the posts that are being created. We'll be using Postgres for that.
 
 To create database, I created a simple script in the `ruby` directory called `setup`:
 
@@ -37,7 +45,8 @@ psql -h localhost -c "drop database if exists polyblog"
 psql -h localhost -c "create database polyblog"
 psql -h localhost -c "grant all privileges on database polyblog to polyblog"
 ```
-I could have of course, also created the table using SQL directly, but I chose to create the table using a Ruby gem called [Sequel](https://github.com/jeremyevans/sequel) (remember to run `bundle install` before you begin). I created a directory called `migrations` to store all the migration files. There's really only one file here, which is `01_setup.rb`. We can progressively add more migration files as we evolve our application but let's start with this:
+
+I could have of course, also created the table using SQL directly, but I chose to create the table using a Ruby gem called [Sequel](https://github.com/jeremyevans/sequel) (remember to run `bundle install` before you begin). I created a directory called `migrations` to store all the migration files. There's really only one file here, which is `01_setup.rb`. We can progressively add more migration files as we evolve our web app but let's start with this:
 
 ```ruby
 Sequel.migration do
@@ -115,7 +124,7 @@ As you can see, the steps are quite straightforward (this is a pattern you'll se
 Going into the details:
 
 1. Define the route ID - it must start with a HTTP method, followed by "/_/" but everything else is up to you
-2. Create a unique UUID - this can be a randomly generated UUID or something you hardcode, just make sure it's unique to the whole application
+2. Create a unique UUID - this can be a randomly generated UUID or something you hardcode, just make sure it's unique to the whole web app
 3. Connect to the broker (which is at port 4321) using a ZeroMQ Request socket
 4. Send the route ID to the broker to register the responder
 5. Loop indefinitely to:
@@ -127,7 +136,7 @@ Going into the details:
         3. JSON encoded headers
         4. Response body (your data)
 
-The content for the response body is mostly going to be HTML so your responder should be able to generate HTML string. 
+The content for the response body is mostly going to be HTML so your responder should be able to generate the HTML string that is sent back as the response. 
 
 To support other responders, I've refactored away the methods to generate the HTML response:
 
@@ -143,7 +152,7 @@ module Helper
 end
 ``` 
 
-What the responder does is simply to generate HTML to be displayed on the browser using HAML and return it  as part of the response.
+What the responder does is simply to generate HTML to be displayed on the browser (using HAML) and return it  as part of the response.
 
 ## Create post
 
@@ -241,7 +250,7 @@ A couple of differences in this responder, compared to the Ruby responder:
 1. In the Ruby responder we don't do anything with the request data, but here we extract the data from the form post and create the post using the form data
 2. In the Ruby responder we return HTML to the browser, but here we send a 302 to the browser, with the location set in the header. instructing the browser to go to another URL i.e. the response is a redirect instruction to the browser
 
-The code looks more complex than the one in the Ruby responder, but it's just that Java is more verbose than Ruby.
+The code looks more complex than the one in the Ruby responder, but it's just that Java is more verbose than Ruby (and that we need to connect to the database first).
 
 ## Show all posts
 
@@ -326,7 +335,7 @@ I used the following Go libraries:
 * [SQLX](https://github.com/jmoiron/sqlx) - for querying and extracting posts from the database
 * html/template - for parsing the HTML template and generating the HTML response
 
-I used SQLX to query for the posts in the database, which is then populated into a struct to be used by html/template for generating the HTML response.
+I used SQLX to query for the posts in the database, which is then populated into a struct to be used by `html/template` for generating the HTML response.
 
 A snippet of the `posts.html` template:
 
@@ -353,15 +362,15 @@ A snippet of the `posts.html` template:
 
 ## Conclusion
 
-As mentioned earlier, writing a web application this way is overly convoluted for a simple application. However, there are a number of benefits for using Polyglot to write a web application:
+As mentioned earlier, writing a web app this way is overly convoluted for a simple blog app. However, there are a number of benefits for using Polyglot to write a web app:
 
-1. Evolve your application - you don't need to create the whole application all at one shot. Create it piecemeal and add new responders or take out old ones as necessary
-2. Scale your application - in this example, we're starting just 1 process for each responder. Polyglot allows you to start as many processes as you like for each responder, and will redirect the request to each one of them round-robin. You don't even need to add them all at one shot, you can add or remove the responders later when you need them
-3. Use what you like to create your responders - as you can see, you can use different programming languages to write responders. In fact you don't even need to write the same responder using the same programming language. In the above example, you can write the same responder using 2 different languages and have them registered with the broker and the broker will send the requests to them in a round robin
+1. **Evolve your web app** - you don't need to create the whole web app all at one shot. Create it piecemeal and add new responders or take out old ones as necessary
+2. **Scale your web app** - in this example, we're starting just 1 process for each responder. Polyglot allows you to start as many processes as you like for each responder, and will redirect the request to each one of them round-robin. You don't even need to add them all at one shot, you can add or remove the responders later when you need them
+3. **Use what you like to create your responders** - as you can see, you can use different programming languages to write responders. In fact you don't even need to write the same responder using the same programming language. In the above example, you can write the same responder using 2 different languages and have them registered with the broker and the broker will send the requests to them in a round robin
 
 Why multiple languages? Logically if you're the only programmer in the team, or if you have a small team with a focused set of skills, you can ust choose one programming language as the primary one. However, teams evolve and change over time, team members leave or join and the skillsets change as well.
 
-When that happens, everyone needs to still keep up with the same chosen programming language, because there's no other choice. What's worse, you need to use the same libraries even though newer libraries or tools are available, unless you migrate from an existing library to a new one. And as the platform and the libraries age, re-platforming or changing libraries become really painful.
+When that happens, everyone needs to learn the same chosen programming language, because there's no other choice. What's worse, you need to use the same libraries even though newer libraries or tools are available, unless you migrate from an existing library to a new one. And as the platform and the libraries age, re-platforming or changing libraries become really painful.
 
 With Polyglot, you can have the flexibility of slowly evolving the entire system from libraries to programming languages to the entire underlying platform. Just write new responders in the new platform while retaining the existing ones. And then move responders piecemeal to the new platform as and when needed. 
 
